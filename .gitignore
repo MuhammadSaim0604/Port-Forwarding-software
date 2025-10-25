@@ -1,0 +1,4 @@
+*.db
+.pythonlibs/
+__pycache__/
+*.pyc

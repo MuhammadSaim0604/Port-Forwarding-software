@@ -1,0 +1,14 @@
+[project]
+name = "tunnel-management-system"
+version = "0.1.0"
+description = "Cross-platform tunnel management system with support for TCP/UDP/HTTP/HTTPS traffic forwarding"
+requires-python = ">=3.11"
+dependencies = [
+    "flask>=3.1.2",
+    "flask-cors>=6.0.1",
+    "flask-socketio>=5.5.1",
+    "python-socketio>=5.14.2",
+    "requests>=2.32.5",
+    "sqlalchemy>=2.0.44",
+    "simple-websocket>=1.1.0",
+]

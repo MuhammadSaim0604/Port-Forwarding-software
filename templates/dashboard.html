@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tunnel Management Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+        
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+        
+        .content {
+            padding: 30px;
+        }
+        
+        .create-tunnel {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+            border: 2px solid #e9ecef;
+        }
+        
+        .create-tunnel h2 {
+            margin-bottom: 20px;
+            color: #333;
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            color: #555;
+            font-weight: 600;
+        }
+        
+        .form-group input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+        
+        .form-group input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        .btn {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+        
+        .btn-danger {
+            background: #dc3545;
+            color: white;
+            padding: 8px 15px;
+            font-size: 14px;
+        }
+        
+        .btn-danger:hover {
+            background: #c82333;
+        }
+        
+        .btn-success {
+            background: #28a745;
+            color: white;
+            padding: 8px 15px;
+            font-size: 14px;
+            margin-right: 5px;
+        }
+        
+        .btn-success:hover {
+            background: #218838;
+        }
+        
+        .tunnels-list h2 {
+            margin-bottom: 20px;
+            color: #333;
+        }
+        
+        .tunnel-card {
+            background: #fff;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 15px;
+            transition: all 0.3s;
+        }
+        
+        .tunnel-card:hover {
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            transform: translateY(-2px);
+        }
+        
+        .tunnel-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .tunnel-name {
+            font-size: 1.4em;
+            font-weight: 700;
+            color: #333;
+        }
+        
+        .tunnel-status {
+            padding: 6px 15px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+        }
+        
+        .status-active {
+            background: #d4edda;
+            color: #155724;
+        }
+        
+        .status-inactive {
+            background: #f8d7da;
+            color: #721c24;
+        }
+        
+        .tunnel-info {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+        
+        .info-item {
+            background: #f8f9fa;
+            padding: 12px;
+            border-radius: 5px;
+        }
+        
+        .info-label {
+            font-size: 12px;
+            color: #666;
+            margin-bottom: 5px;
+        }
+        
+        .info-value {
+            font-size: 16px;
+            font-weight: 600;
+            color: #333;
+        }
+        
+        .tunnel-actions {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .alert {
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+        
+        .alert-success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .alert-info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+        
+        .verification-link {
+            color: #007bff;
+            text-decoration: none;
+            font-weight: 600;
+        }
+        
+        .verification-link:hover {
+            text-decoration: underline;
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #999;
+        }
+        
+        .empty-state i {
+            font-size: 4em;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🌐 Tunnel Management Dashboard</h1>
+            <p>Create and manage secure tunnels for port forwarding</p>
+        </div>
+        
+        <div class="content">
+            <div class="create-tunnel">
+                <h2>Create New Tunnel</h2>
+                <form id="createTunnelForm">
+                    <div class="form-group">
+                        <label for="tunnelName">Tunnel Name</label>
+                        <input type="text" id="tunnelName" placeholder="e.g., My Web Server" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="localPort">Local Port (on Windows machine)</label>
+                        <input type="number" id="localPort" placeholder="e.g., 8080" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="protocol">Protocol</label>
+                        <select id="protocol" style="width: 100%; padding: 12px; border: 2px solid #ddd; border-radius: 5px; font-size: 16px;">
+                            <option value="TCP">TCP (HTTP, HTTPS, SSH, etc.)</option>
+                            <option value="UDP">UDP (Gaming, DNS, VoIP, etc.)</option>
+                            <option value="BOTH">Both TCP and UDP</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Create Tunnel</button>
+                </form>
+            </div>
+            
+            <div id="alertContainer"></div>
+            
+            <div class="tunnels-list">
+                <h2>Active Tunnels</h2>
+                <div id="tunnelsList"></div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        function showAlert(message, type = 'success') {
+            const alertContainer = document.getElementById('alertContainer');
+            const alert = document.createElement('div');
+            alert.className = `alert alert-${type}`;
+            alert.innerHTML = message;
+            alertContainer.appendChild(alert);
+            setTimeout(() => alert.remove(), 5000);
+        }
+        
+        function loadTunnels() {
+            fetch('/api/tunnels')
+                .then(response => response.json())
+                .then(tunnels => {
+                    const tunnelsList = document.getElementById('tunnelsList');
+                    
+                    if (tunnels.length === 0) {
+                        tunnelsList.innerHTML = '<div class="empty-state"><div style="font-size: 3em;">📡</div><h3>No tunnels created yet</h3><p>Create your first tunnel to get started!</p></div>';
+                        return;
+                    }
+                    
+                    tunnelsList.innerHTML = tunnels.map(tunnel => `
+                        <div class="tunnel-card">
+                            <div class="tunnel-header">
+                                <div class="tunnel-name">${tunnel.name}</div>
+                                <div class="tunnel-status status-${tunnel.status}">
+                                    ${tunnel.status.toUpperCase()}
+                                </div>
+                            </div>
+                            
+                            <div class="tunnel-info">
+                                <div class="info-item">
+                                    <div class="info-label">Public Address</div>
+                                    <div class="info-value" style="font-size: 14px; word-break: break-all;">${tunnel.public_ip}:${tunnel.public_port}</div>
+                                </div>
+                                <div class="info-item">
+                                    <div class="info-label">Protocol</div>
+                                    <div class="info-value">${tunnel.protocol || 'TCP'}</div>
+                                </div>
+                                <div class="info-item">
+                                    <div class="info-label">Local Port</div>
+                                    <div class="info-value">${tunnel.local_port}</div>
+                                </div>
+                                <div class="info-item">
+                                    <div class="info-label">Verified</div>
+                                    <div class="info-value">${tunnel.verified ? '✅ Yes' : '❌ No'}</div>
+                                </div>
+                                <div class="info-item">
+                                    <div class="info-label">Created</div>
+                                    <div class="info-value">${new Date(tunnel.created_at).toLocaleDateString()}</div>
+                                </div>
+                            </div>
+                            
+                            ${!tunnel.verified ? `
+                                <div class="alert alert-info">
+                                    ⚠️ Please verify this tunnel before using it: 
+                                    <a href="${tunnel.verification_url}" class="verification-link" target="_blank">Click here to verify</a>
+                                </div>
+                            ` : ''}
+                            
+                            <div class="tunnel-actions">
+                                <button onclick="downloadBat(${tunnel.id})" class="btn btn-success">
+                                    📥 Download .bat File
+                                </button>
+                                <button onclick="deleteTunnel(${tunnel.id})" class="btn btn-danger">
+                                    🗑️ Delete
+                                </button>
+                            </div>
+                        </div>
+                    `).join('');
+                });
+        }
+        
+        document.getElementById('createTunnelForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const name = document.getElementById('tunnelName').value;
+            const local_port = parseInt(document.getElementById('localPort').value);
+            const protocol = document.getElementById('protocol').value;
+            
+            fetch('/api/tunnels', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ name, local_port, protocol })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    showAlert('Error: ' + data.error, 'danger');
+                } else {
+                    showAlert(`✅ Tunnel "${data.name}" created successfully! Protocol: ${data.protocol}, Public port: ${data.public_port}. Please verify it before use.`, 'success');
+                    document.getElementById('createTunnelForm').reset();
+                    loadTunnels();
+                }
+            });
+        });
+        
+        function downloadBat(tunnelId) {
+            window.location.href = `/download/${tunnelId}`;
+        }
+        
+        function deleteTunnel(tunnelId) {
+            if (confirm('Are you sure you want to delete this tunnel?')) {
+                fetch(`/api/tunnels/${tunnelId}`, {
+                    method: 'DELETE'
+                })
+                .then(response => response.json())
+                .then(data => {
+                    showAlert('✅ Tunnel deleted successfully', 'success');
+                    loadTunnels();
+                });
+            }
+        }
+        
+        loadTunnels();
+        setInterval(loadTunnels, 5000);
+    </script>
+</body>
+</html>

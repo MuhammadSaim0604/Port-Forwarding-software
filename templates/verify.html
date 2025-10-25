@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tunnel Verification</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .verification-container {
+            background: white;
+            border-radius: 15px;
+            padding: 50px;
+            max-width: 600px;
+            text-align: center;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        
+        .icon {
+            font-size: 5em;
+            margin-bottom: 20px;
+        }
+        
+        .success-icon {
+            color: #28a745;
+        }
+        
+        .error-icon {
+            color: #dc3545;
+        }
+        
+        h1 {
+            font-size: 2.5em;
+            margin-bottom: 20px;
+            color: #333;
+        }
+        
+        .message {
+            font-size: 1.2em;
+            color: #666;
+            margin-bottom: 30px;
+            line-height: 1.6;
+        }
+        
+        .tunnel-info {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            text-align: left;
+        }
+        
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid #dee2e6;
+        }
+        
+        .info-row:last-child {
+            border-bottom: none;
+        }
+        
+        .info-label {
+            font-weight: 600;
+            color: #555;
+        }
+        
+        .info-value {
+            color: #333;
+            font-weight: 700;
+        }
+        
+        .btn {
+            display: inline-block;
+            padding: 15px 40px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            font-size: 18px;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+    </style>
+</head>
+<body>
+    <div class="verification-container">
+        {% if success %}
+            <div class="icon success-icon">✅</div>
+            <h1>Verification Successful!</h1>
+            <p class="message">{{ message }}</p>
+            
+            {% if tunnel %}
+            <div class="tunnel-info">
+                <h3 style="margin-bottom: 15px; color: #333;">Tunnel Details</h3>
+                <div class="info-row">
+                    <span class="info-label">Tunnel Name:</span>
+                    <span class="info-value">{{ tunnel.name }}</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Local Port:</span>
+                    <span class="info-value">{{ tunnel.local_port }}</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Public Port:</span>
+                    <span class="info-value">{{ tunnel.public_port }}</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Status:</span>
+                    <span class="info-value">{{ tunnel.status }}</span>
+                </div>
+            </div>
+            
+            <p class="message" style="font-size: 1em; color: #28a745;">
+                ✅ Your tunnel is now verified! You can now run the .bat file on your Windows machine to establish the connection.
+            </p>
+            {% endif %}
+        {% else %}
+            <div class="icon error-icon">❌</div>
+            <h1>Verification Failed</h1>
+            <p class="message">{{ message }}</p>
+        {% endif %}
+        
+        <a href="/" class="btn">Go to Dashboard</a>
+    </div>
+</body>
+</html>
