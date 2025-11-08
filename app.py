@@ -146,7 +146,7 @@ def download_bat(tunnel_id):
                 local_ip = '127.0.0.1'
                 
             domain = f"{local_ip}:5000"
-        server_url = f"https://{domain}" if 'replit' in domain.lower() else f"http://{domain}"
+        server_url = f"https://{domain}" if 'replit' in domain.lower() else f"https://{domain}"
         
         verification_msg = ""
         if not tunnel.verified:
