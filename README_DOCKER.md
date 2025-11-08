@@ -26,5 +26,6 @@ Deploying to Render (Docker)
 4. Render provides a `PORT` environment variable to the container at runtime. The app reads `PORT` from the environment. No additional start command is required.
 
 Notes
-- If you want to use a production-ready async worker for Socket.IO, consider adding `eventlet` or `gevent` to `requirements.txt` and changing the runtime to use that when appropriate.
+- The Docker image installs `eventlet` to provide a production-ready async server for Flask-SocketIO. This prevents the "Werkzeug web server is not designed to run in production" error on Render.
 - Keep secrets (DB credentials, SECRET_KEY) as Render environment variables rather than committing them to source.
+ 

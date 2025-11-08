@@ -9,7 +9,9 @@ WORKDIR /app
 
 # Copy requirements and install first (leverages Docker cache)
 COPY requirements.txt ./
-RUN pip install --no-cache-dir -r requirements.txt
+# Install Python requirements and ensure eventlet is available for Socket.IO production server
+RUN pip install --no-cache-dir -r requirements.txt && \
+    pip install --no-cache-dir eventlet
 
 # Copy application code
 COPY . /app
