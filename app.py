@@ -14,7 +14,8 @@ import socket
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'tunnel-management-secret-key-change-in-production'
 CORS(app)
-socketio = SocketIO(app, cors_allowed_origins="*", async_mode='threading', ping_timeout=120, ping_interval=25)
+# Let Flask-SocketIO auto-select the best async mode (eventlet/gevent) in production.
+socketio = SocketIO(app, cors_allowed_origins="*", ping_timeout=120, ping_interval=25)
 
 connected_tunnels = {}
 traffic_proxy = None
