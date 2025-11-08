@@ -1,9 +1,11 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tunnel Management Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         * {
             margin: 0;
@@ -12,251 +14,694 @@
         }
         
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f5f7fa;
             min-height: 100vh;
-            padding: 20px;
+            padding: 0;
+            position: relative;
+            overflow-x: hidden;
         }
-        
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
+
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 260px;
             background: white;
-            border-radius: 10px;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
-            overflow: hidden;
+            border-right: 1px solid #e5e7eb;
+            padding: 30px 20px;
+            z-index: 100;
+            box-shadow: 2px 0 10px rgba(0,0,0,0.02);
+        }
+
+        .logo {
+            font-size: 1.5em;
+            font-weight: 700;
+            color: #1f2937;
+            margin-bottom: 40px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logo::before {
+            content: '🌐';
+            font-size: 1.2em;
+        }
+
+        .nav-item {
+            padding: 12px 16px;
+            margin-bottom: 8px;
+            border-radius: 8px;
+            color: #6b7280;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-weight: 500;
+        }
+
+        .nav-item:hover {
+            background: #f3f4f6;
+            color: #1f2937;
+        }
+
+        .nav-item.active {
+            background: #667eea;
+            color: white;
+        }
+
+        .main-content {
+            margin-left: 260px;
+            padding: 30px 40px;
         }
         
         .header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
+            background: white;
             padding: 30px;
-            text-align: center;
+            border-radius: 12px;
+            margin-bottom: 30px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            border: 1px solid #e5e7eb;
         }
         
         .header h1 {
-            font-size: 2.5em;
-            margin-bottom: 10px;
+            font-size: 2em;
+            margin-bottom: 8px;
+            font-weight: 700;
+            color: #1f2937;
         }
         
         .header p {
-            font-size: 1.1em;
-            opacity: 0.9;
+            font-size: 1em;
+            color: #6b7280;
         }
-        
-        .content {
-            padding: 30px;
-        }
-        
-        .create-tunnel {
-            background: #f8f9fa;
-            padding: 25px;
-            border-radius: 8px;
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 20px;
             margin-bottom: 30px;
-            border: 2px solid #e9ecef;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            border: 1px solid #e5e7eb;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            transition: all 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            border-color: #667eea;
+        }
+
+        .stat-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5em;
+            margin-bottom: 15px;
+        }
+
+        .stat-card:nth-child(1) .stat-icon {
+            background: linear-gradient(135deg, #667eea15, #764ba215);
+            color: #667eea;
+        }
+
+        .stat-card:nth-child(2) .stat-icon {
+            background: linear-gradient(135deg, #10b98115, #06b6d415);
+            color: #10b981;
+        }
+
+        .stat-card:nth-child(3) .stat-icon {
+            background: linear-gradient(135deg, #f59e0b15, #f97316 15);
+            color: #f59e0b;
+        }
+
+        .stat-number {
+            font-size: 2em;
+            font-weight: 700;
+            color: #1f2937;
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            color: #6b7280;
+            font-size: 0.9em;
+            font-weight: 500;
         }
         
-        .create-tunnel h2 {
-            margin-bottom: 20px;
-            color: #333;
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            margin-bottom: 30px;
+            border: 1px solid #e5e7eb;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            transition: all 0.3s ease;
+        }
+
+        .card:hover {
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+        }
+        
+        .card h2 {
+            margin-bottom: 25px;
+            color: #1f2937;
+            font-size: 1.5em;
+            font-weight: 700;
         }
         
         .form-group {
-            margin-bottom: 15px;
+            margin-bottom: 20px;
         }
         
         .form-group label {
             display: block;
-            margin-bottom: 5px;
-            color: #555;
+            margin-bottom: 8px;
+            color: #374151;
             font-weight: 600;
+            font-size: 0.9em;
         }
         
-        .form-group input {
+        .form-group input,
+        .form-group select {
             width: 100%;
-            padding: 12px;
-            border: 2px solid #ddd;
-            border-radius: 5px;
-            font-size: 16px;
-            transition: border-color 0.3s;
+            padding: 12px 16px;
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            font-size: 15px;
+            transition: all 0.2s ease;
+            background: white;
+            font-family: 'Inter', sans-serif;
+            color: #1f2937;
         }
         
-        .form-group input:focus {
+        .form-group input:focus,
+        .form-group select:focus {
             outline: none;
             border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
         }
         
         .btn {
-            padding: 12px 30px;
+            padding: 12px 24px;
             border: none;
-            border-radius: 5px;
+            border-radius: 8px;
             cursor: pointer;
-            font-size: 16px;
+            font-size: 15px;
             font-weight: 600;
-            transition: all 0.3s;
+            transition: all 0.2s ease;
+            text-decoration: none;
+            display: inline-block;
+            font-family: 'Inter', sans-serif;
         }
         
         .btn-primary {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: #667eea;
             color: white;
+            box-shadow: 0 2px 4px rgba(102, 126, 234, 0.2);
         }
         
         .btn-primary:hover {
+            background: #5568d3;
             transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+            box-shadow: 0 4px 8px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-primary:active {
+            transform: translateY(0);
         }
         
         .btn-danger {
-            background: #dc3545;
+            background: #ef4444;
             color: white;
-            padding: 8px 15px;
+            padding: 10px 20px;
             font-size: 14px;
         }
         
         .btn-danger:hover {
-            background: #c82333;
+            background: #dc2626;
+            transform: translateY(-2px);
         }
         
         .btn-success {
-            background: #28a745;
+            background: #10b981;
             color: white;
-            padding: 8px 15px;
+            padding: 10px 20px;
             font-size: 14px;
-            margin-right: 5px;
+            margin-right: 8px;
         }
         
         .btn-success:hover {
-            background: #218838;
-        }
-        
-        .tunnels-list h2 {
-            margin-bottom: 20px;
-            color: #333;
+            background: #059669;
+            transform: translateY(-2px);
         }
         
         .tunnel-card {
-            background: #fff;
-            border: 2px solid #e9ecef;
-            border-radius: 8px;
-            padding: 20px;
-            margin-bottom: 15px;
-            transition: all 0.3s;
+            background: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 20px;
+            transition: all 0.3s ease;
+            animation: slideIn 0.5s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
         
         .tunnel-card:hover {
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
             transform: translateY(-2px);
+            border-color: #667eea;
         }
         
         .tunnel-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 15px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 10px;
         }
         
         .tunnel-name {
-            font-size: 1.4em;
+            font-size: 1.3em;
             font-weight: 700;
-            color: #333;
+            color: #1f2937;
         }
         
         .tunnel-status {
-            padding: 6px 15px;
+            padding: 6px 16px;
             border-radius: 20px;
-            font-size: 14px;
+            font-size: 12px;
             font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
         
         .status-active {
-            background: #d4edda;
-            color: #155724;
+            background: #d1fae5;
+            color: #065f46;
         }
         
         .status-inactive {
-            background: #f8d7da;
-            color: #721c24;
+            background: #fee2e2;
+            color: #991b1b;
         }
         
         .tunnel-info {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
             gap: 15px;
-            margin-bottom: 15px;
+            margin-bottom: 20px;
         }
         
         .info-item {
-            background: #f8f9fa;
-            padding: 12px;
-            border-radius: 5px;
+            background: #f9fafb;
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid #e5e7eb;
         }
         
         .info-label {
-            font-size: 12px;
-            color: #666;
-            margin-bottom: 5px;
+            font-size: 11px;
+            color: #6b7280;
+            margin-bottom: 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-weight: 600;
         }
         
         .info-value {
-            font-size: 16px;
+            font-size: 15px;
             font-weight: 600;
-            color: #333;
+            color: #1f2937;
+            word-break: break-all;
         }
         
         .tunnel-actions {
             display: flex;
             gap: 10px;
+            flex-wrap: wrap;
         }
         
         .alert {
-            padding: 15px;
-            border-radius: 5px;
+            padding: 16px 20px;
+            border-radius: 8px;
             margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            animation: slideDown 0.5s ease;
+            border: 1px solid;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
         
         .alert-success {
-            background: #d4edda;
-            color: #155724;
-            border: 1px solid #c3e6cb;
+            background: #d1fae5;
+            color: #065f46;
+            border-color: #a7f3d0;
         }
         
         .alert-info {
-            background: #d1ecf1;
-            color: #0c5460;
-            border: 1px solid #bee5eb;
+            background: #dbeafe;
+            color: #1e40af;
+            border-color: #bfdbfe;
         }
         
         .verification-link {
-            color: #007bff;
+            color: #667eea;
             text-decoration: none;
-            font-weight: 600;
+            font-weight: 700;
+            border-bottom: 2px solid transparent;
+            transition: all 0.2s ease;
         }
         
         .verification-link:hover {
-            text-decoration: underline;
+            border-bottom-color: #667eea;
         }
         
         .empty-state {
             text-align: center;
-            padding: 60px 20px;
-            color: #999;
+            padding: 80px 20px;
+            color: #9ca3af;
         }
         
-        .empty-state i {
+        .empty-state .icon {
             font-size: 4em;
             margin-bottom: 20px;
+            opacity: 0.5;
+        }
+
+        .empty-state h3 {
+            font-size: 1.3em;
+            margin-bottom: 10px;
+            color: #6b7280;
+        }
+
+        .loading-spinner {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border: 2px solid rgba(255,255,255,0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .toast-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+        }
+
+        .toast {
+            background: white;
+            padding: 16px 20px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            min-width: 300px;
+            animation: toastSlide 0.3s ease;
+            border: 1px solid #e5e7eb;
+        }
+
+        @keyframes toastSlide {
+            from {
+                transform: translateX(400px);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+
+            .main-content {
+                margin-left: 0;
+                padding: 20px;
+            }
+
+            .tunnel-info {
+                grid-template-columns: 1fr;
+            }
+
+            .tunnel-actions {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+            }
+        }
+
+        .copy-btn {
+            cursor: pointer;
+            padding: 4px 10px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 11px;
+            margin-left: 8px;
+            transition: all 0.2s ease;
+            font-weight: 600;
+        }
+
+        .copy-btn:hover {
+            background: #5568d3;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .badge-verified {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .badge-pending {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .settings-section {
+            margin-bottom: 30px;
+        }
+
+        .settings-section h3 {
+            font-size: 1.2em;
+            color: #1f2937;
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+
+        .setting-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            background: #f9fafb;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            border: 1px solid #e5e7eb;
+        }
+
+        .setting-label {
+            font-weight: 500;
+            color: #374151;
+        }
+
+        .setting-description {
+            font-size: 0.9em;
+            color: #6b7280;
+            margin-top: 4px;
+        }
+
+        .toggle-switch {
+            position: relative;
+            width: 50px;
+            height: 26px;
+            background: #d1d5db;
+            border-radius: 13px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .toggle-switch.active {
+            background: #667eea;
+        }
+
+        .toggle-switch::after {
+            content: '';
+            position: absolute;
+            width: 22px;
+            height: 22px;
+            background: white;
+            border-radius: 50%;
+            top: 2px;
+            left: 2px;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .toggle-switch.active::after {
+            left: 26px;
+        }
+
+        .doc-section {
+            margin-bottom: 30px;
+        }
+
+        .doc-section h3 {
+            font-size: 1.3em;
+            color: #1f2937;
+            margin-bottom: 12px;
+            font-weight: 600;
+        }
+
+        .doc-section p {
+            color: #4b5563;
+            line-height: 1.6;
+            margin-bottom: 12px;
+        }
+
+        .doc-section code {
+            background: #f3f4f6;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            color: #ef4444;
+        }
+
+        .code-block {
+            background: #1f2937;
+            color: #f9fafb;
+            padding: 20px;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin: 15px 0;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            line-height: 1.5;
+        }
+
+        .doc-list {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .doc-list li {
+            padding: 10px 0 10px 30px;
+            position: relative;
+            color: #4b5563;
+        }
+
+        .doc-list li::before {
+            content: '→';
+            position: absolute;
+            left: 0;
+            color: #667eea;
+            font-weight: bold;
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="header">
-            <h1>🌐 Tunnel Management Dashboard</h1>
-            <p>Create and manage secure tunnels for port forwarding</p>
-        </div>
+    <div class="sidebar">
+        <div class="logo">Tunnel Manager</div>
+        <div class="nav-item active" data-tab="dashboard">📊 Dashboard</div>
+        <div class="nav-item" data-tab="tunnels">🌐 Tunnels</div>
+        <div class="nav-item" data-tab="settings">⚙️ Settings</div>
+        <div class="nav-item" data-tab="documentation">📖 Documentation</div>
+    </div>
+
+    <div class="main-content">
+        <div class="toast-container" id="toastContainer"></div>
         
-        <div class="content">
-            <div class="create-tunnel">
+        <!-- Dashboard Tab -->
+        <div id="dashboard" class="tab-content active">
+            <div class="header">
+                <h1>Dashboard</h1>
+                <p>Manage and monitor your secure tunnels</p>
+            </div>
+
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon">📡</div>
+                    <div class="stat-number" id="totalTunnels">0</div>
+                    <div class="stat-label">Total Tunnels</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">✅</div>
+                    <div class="stat-number" id="activeTunnels">0</div>
+                    <div class="stat-label">Active Tunnels</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">🔒</div>
+                    <div class="stat-number" id="verifiedTunnels">0</div>
+                    <div class="stat-label">Verified Tunnels</div>
+                </div>
+            </div>
+            
+            <div class="card">
                 <h2>Create New Tunnel</h2>
                 <form id="createTunnelForm">
                     <div class="form-group">
@@ -264,48 +709,278 @@
                         <input type="text" id="tunnelName" placeholder="e.g., My Web Server" required>
                     </div>
                     <div class="form-group">
-                        <label for="localPort">Local Port (on Windows machine)</label>
-                        <input type="number" id="localPort" placeholder="e.g., 8080" required>
+                        <label for="localPort">Local Port</label>
+                        <input type="number" id="localPort" placeholder="e.g., 8080" required min="1" max="65535">
                     </div>
                     <div class="form-group">
                         <label for="protocol">Protocol</label>
-                        <select id="protocol" style="width: 100%; padding: 12px; border: 2px solid #ddd; border-radius: 5px; font-size: 16px;">
+                        <select id="protocol">
                             <option value="TCP">TCP (HTTP, HTTPS, SSH, etc.)</option>
                             <option value="UDP">UDP (Gaming, DNS, VoIP, etc.)</option>
                             <option value="BOTH">Both TCP and UDP</option>
                         </select>
                     </div>
-                    <button type="submit" class="btn btn-primary">Create Tunnel</button>
+                    <button type="submit" class="btn btn-primary">
+                        <span>Create Tunnel</span>
+                    </button>
                 </form>
             </div>
             
             <div id="alertContainer"></div>
+        </div>
+
+        <!-- Tunnels Tab -->
+        <div id="tunnels" class="tab-content">
+            <div class="header">
+                <h1>Your Tunnels</h1>
+                <p>View and manage all your active tunnels</p>
+            </div>
             
-            <div class="tunnels-list">
-                <h2>Active Tunnels</h2>
+            <div class="card">
+                <h2>All Tunnels</h2>
                 <div id="tunnelsList"></div>
+            </div>
+        </div>
+
+        <!-- Settings Tab -->
+        <div id="settings" class="tab-content">
+            <div class="header">
+                <h1>Settings</h1>
+                <p>Configure your tunnel management preferences</p>
+            </div>
+
+            <div class="card">
+                <div class="settings-section">
+                    <h3>General Settings</h3>
+                    <div class="setting-item">
+                        <div>
+                            <div class="setting-label">Auto-refresh Dashboard</div>
+                            <div class="setting-description">Automatically refresh tunnel status every 5 seconds</div>
+                        </div>
+                        <div class="toggle-switch active" id="autoRefresh"></div>
+                    </div>
+                    <div class="setting-item">
+                        <div>
+                            <div class="setting-label">Show Notifications</div>
+                            <div class="setting-description">Display toast notifications for tunnel events</div>
+                        </div>
+                        <div class="toggle-switch active" id="showNotifications"></div>
+                    </div>
+                </div>
+
+                <div class="settings-section">
+                    <h3>Security Settings</h3>
+                    <div class="setting-item">
+                        <div>
+                            <div class="setting-label">Require Verification</div>
+                            <div class="setting-description">All new tunnels must be verified before use</div>
+                        </div>
+                        <div class="toggle-switch active" id="requireVerification"></div>
+                    </div>
+                    <div class="setting-item">
+                        <div>
+                            <div class="setting-label">Delete Inactive Tunnels</div>
+                            <div class="setting-description">Automatically remove tunnels inactive for 30 days</div>
+                        </div>
+                        <div class="toggle-switch" id="autoDelete"></div>
+                    </div>
+                </div>
+
+                <div class="settings-section">
+                    <h3>Advanced Settings</h3>
+                    <div class="form-group">
+                        <label>Default Protocol</label>
+                        <select id="defaultProtocol">
+                            <option value="TCP">TCP</option>
+                            <option value="UDP">UDP</option>
+                            <option value="BOTH">Both</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Connection Timeout (seconds)</label>
+                        <input type="number" id="connectionTimeout" value="30" min="10" max="300">
+                    </div>
+                    <button class="btn btn-primary" onclick="saveSettings()">Save Settings</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Documentation Tab -->
+        <div id="documentation" class="tab-content">
+            <div class="header">
+                <h1>Documentation</h1>
+                <p>Learn how to use the Tunnel Management System</p>
+            </div>
+
+            <div class="card">
+                <div class="doc-section">
+                    <h3>Getting Started</h3>
+                    <p>The Tunnel Management System allows you to expose local services to the internet securely through encrypted tunnels.</p>
+                    <ul class="doc-list">
+                        <li>Create a tunnel with a name and local port</li>
+                        <li>Verify your tunnel through the verification link</li>
+                        <li>Download and run the client to establish connection</li>
+                        <li>Access your service via the public address</li>
+                    </ul>
+                </div>
+
+                <div class="doc-section">
+                    <h3>Creating a Tunnel</h3>
+                    <p>To create a new tunnel:</p>
+                    <ol class="doc-list">
+                        <li>Navigate to the Dashboard tab</li>
+                        <li>Fill in the tunnel name (e.g., "My Web Server")</li>
+                        <li>Specify the local port your service runs on</li>
+                        <li>Select the protocol (TCP for web, UDP for gaming)</li>
+                        <li>Click "Create Tunnel"</li>
+                    </ol>
+                </div>
+
+                <div class="doc-section">
+                    <h3>Verifying Tunnels</h3>
+                    <p>After creating a tunnel, you must verify it before use. Click the verification link shown in the tunnel card or in the alert message. This security step ensures only authorized users can create tunnels.</p>
+                </div>
+
+                <div class="doc-section">
+                    <h3>Running the Client</h3>
+                    <p>Download the client file (.bat for Windows) from the tunnel card and run it. The client will:</p>
+                    <ul class="doc-list">
+                        <li>Install required Python dependencies</li>
+                        <li>Connect to the server using WebSocket</li>
+                        <li>Forward traffic between public port and local service</li>
+                    </ul>
+                    <div class="code-block">
+# Example: Running the client manually
+python tunnel_client.py https://your-server.com TOKEN_HERE TUNNEL_ID LOCAL_PORT
+                    </div>
+                </div>
+
+                <div class="doc-section">
+                    <h3>Protocol Support</h3>
+                    <p>The system supports multiple protocols:</p>
+                    <ul class="doc-list">
+                        <li><strong>TCP:</strong> Best for HTTP, HTTPS, SSH, databases, and most web services</li>
+                        <li><strong>UDP:</strong> Ideal for gaming, VoIP, DNS, and streaming applications</li>
+                        <li><strong>BOTH:</strong> Forwards both TCP and UDP traffic on the same port</li>
+                    </ul>
+                </div>
+
+                <div class="doc-section">
+                    <h3>Common Use Cases</h3>
+                    <ul class="doc-list">
+                        <li><strong>Web Development:</strong> Share your local development server (port 3000, 8080, etc.)</li>
+                        <li><strong>Game Servers:</strong> Host Minecraft, Counter-Strike servers using UDP</li>
+                        <li><strong>API Testing:</strong> Expose your local API for testing with external services</li>
+                        <li><strong>IoT Devices:</strong> Connect to devices behind NAT/firewall</li>
+                        <li><strong>Remote Access:</strong> SSH into your local machine from anywhere</li>
+                    </ul>
+                </div>
+
+                <div class="doc-section">
+                    <h3>Troubleshooting</h3>
+                    <p><strong>Tunnel shows as inactive:</strong></p>
+                    <ul class="doc-list">
+                        <li>Ensure the client is running</li>
+                        <li>Check that the tunnel is verified</li>
+                        <li>Verify the local service is running on the specified port</li>
+                    </ul>
+                    <p><strong>Cannot connect to public address:</strong></p>
+                    <ul class="doc-list">
+                        <li>Confirm tunnel status is "Active"</li>
+                        <li>Check firewall settings on your local machine</li>
+                        <li>Ensure the local port matches your service</li>
+                    </ul>
+                </div>
+
+                <div class="doc-section">
+                    <h3>API Endpoints</h3>
+                    <div class="code-block">
+GET  /api/tunnels          - List all tunnels
+POST /api/tunnels          - Create new tunnel
+DELETE /api/tunnels/:id    - Delete tunnel
+GET  /verify/:code         - Verify tunnel
+GET  /download/:id         - Download client
+                    </div>
+                </div>
             </div>
         </div>
     </div>
     
     <script>
-        function showAlert(message, type = 'success') {
-            const alertContainer = document.getElementById('alertContainer');
-            const alert = document.createElement('div');
-            alert.className = `alert alert-${type}`;
-            alert.innerHTML = message;
-            alertContainer.appendChild(alert);
-            setTimeout(() => alert.remove(), 5000);
+        // Tab switching
+        document.querySelectorAll('.nav-item').forEach(item => {
+            item.addEventListener('click', function() {
+                const tabName = this.getAttribute('data-tab');
+                
+                // Update active nav item
+                document.querySelectorAll('.nav-item').forEach(nav => nav.classList.remove('active'));
+                this.classList.add('active');
+                
+                // Show corresponding tab content
+                document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+                document.getElementById(tabName).classList.add('active');
+            });
+        });
+
+        // Settings toggles
+        document.querySelectorAll('.toggle-switch').forEach(toggle => {
+            toggle.addEventListener('click', function() {
+                this.classList.toggle('active');
+            });
+        });
+
+        function saveSettings() {
+            showToast('Settings saved successfully!', 'success');
+        }
+
+        function showToast(message, type = 'success') {
+            const container = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            toast.className = 'toast';
+            toast.innerHTML = `
+                <span style="font-size: 1.3em;">${type === 'success' ? '✅' : '❌'}</span>
+                <span style="color: #1f2937; font-weight: 500;">${message}</span>
+            `;
+            container.appendChild(toast);
+            setTimeout(() => {
+                toast.style.animation = 'toastSlide 0.3s ease reverse';
+                setTimeout(() => toast.remove(), 300);
+            }, 4000);
+        }
+
+        function updateStats(tunnels) {
+            document.getElementById('totalTunnels').textContent = tunnels.length;
+            document.getElementById('activeTunnels').textContent = tunnels.filter(t => t.status === 'active').length;
+            document.getElementById('verifiedTunnels').textContent = tunnels.filter(t => t.verified).length;
+        }
+
+        function copyToClipboard(text, button) {
+            navigator.clipboard.writeText(text).then(() => {
+                const originalText = button.textContent;
+                button.textContent = '✓ Copied';
+                button.style.background = '#10b981';
+                setTimeout(() => {
+                    button.textContent = originalText;
+                    button.style.background = '';
+                }, 2000);
+            });
         }
         
         function loadTunnels() {
             fetch('/api/tunnels')
                 .then(response => response.json())
                 .then(tunnels => {
+                    updateStats(tunnels);
                     const tunnelsList = document.getElementById('tunnelsList');
                     
                     if (tunnels.length === 0) {
-                        tunnelsList.innerHTML = '<div class="empty-state"><div style="font-size: 3em;">📡</div><h3>No tunnels created yet</h3><p>Create your first tunnel to get started!</p></div>';
+                        tunnelsList.innerHTML = `
+                            <div class="empty-state">
+                                <div class="icon">📡</div>
+                                <h3>No tunnels yet</h3>
+                                <p>Create your first tunnel to get started</p>
+                            </div>
+                        `;
                         return;
                     }
                     
@@ -314,14 +989,17 @@
                             <div class="tunnel-header">
                                 <div class="tunnel-name">${tunnel.name}</div>
                                 <div class="tunnel-status status-${tunnel.status}">
-                                    ${tunnel.status.toUpperCase()}
+                                    ${tunnel.status === 'active' ? '● Active' : '○ Inactive'}
                                 </div>
                             </div>
                             
                             <div class="tunnel-info">
                                 <div class="info-item">
                                     <div class="info-label">Public Address</div>
-                                    <div class="info-value" style="font-size: 14px; word-break: break-all;">${tunnel.public_ip}:${tunnel.public_port}</div>
+                                    <div class="info-value">
+                                        ${tunnel.public_ip}:${tunnel.public_port}
+                                        <button class="copy-btn" onclick="copyToClipboard('${tunnel.public_ip}:${tunnel.public_port}', this)">Copy</button>
+                                    </div>
                                 </div>
                                 <div class="info-item">
                                     <div class="info-label">Protocol</div>
@@ -332,8 +1010,12 @@
                                     <div class="info-value">${tunnel.local_port}</div>
                                 </div>
                                 <div class="info-item">
-                                    <div class="info-label">Verified</div>
-                                    <div class="info-value">${tunnel.verified ? '✅ Yes' : '❌ No'}</div>
+                                    <div class="info-label">Status</div>
+                                    <div class="info-value">
+                                        <span class="badge ${tunnel.verified ? 'badge-verified' : 'badge-pending'}">
+                                            ${tunnel.verified ? '✓ Verified' : '⏳ Pending'}
+                                        </span>
+                                    </div>
                                 </div>
                                 <div class="info-item">
                                     <div class="info-label">Created</div>
@@ -343,14 +1025,14 @@
                             
                             ${!tunnel.verified ? `
                                 <div class="alert alert-info">
-                                    ⚠️ Please verify this tunnel before using it: 
-                                    <a href="${tunnel.verification_url}" class="verification-link" target="_blank">Click here to verify</a>
+                                    ⚠️ Verify this tunnel to start using it: 
+                                    <a href="${tunnel.verification_url}" class="verification-link" target="_blank">Click to verify</a>
                                 </div>
                             ` : ''}
                             
                             <div class="tunnel-actions">
                                 <button onclick="downloadBat(${tunnel.id})" class="btn btn-success">
-                                    📥 Download .bat File
+                                    📥 Download Client
                                 </button>
                                 <button onclick="deleteTunnel(${tunnel.id})" class="btn btn-danger">
                                     🗑️ Delete
@@ -363,6 +1045,11 @@
         
         document.getElementById('createTunnelForm').addEventListener('submit', function(e) {
             e.preventDefault();
+            
+            const submitBtn = this.querySelector('button[type="submit"]');
+            const originalHtml = submitBtn.innerHTML;
+            submitBtn.innerHTML = '<span class="loading-spinner"></span> Creating...';
+            submitBtn.disabled = true;
             
             const name = document.getElementById('tunnelName').value;
             const local_port = parseInt(document.getElementById('localPort').value);
@@ -377,18 +1064,27 @@
             })
             .then(response => response.json())
             .then(data => {
+                submitBtn.innerHTML = originalHtml;
+                submitBtn.disabled = false;
+                
                 if (data.error) {
-                    showAlert('Error: ' + data.error, 'danger');
+                    showToast('Error: ' + data.error, 'error');
                 } else {
-                    showAlert(`✅ Tunnel "${data.name}" created successfully! Protocol: ${data.protocol}, Public port: ${data.public_port}. Please verify it before use.`, 'success');
+                    showToast(`Tunnel "${data.name}" created successfully!`, 'success');
                     document.getElementById('createTunnelForm').reset();
                     loadTunnels();
                 }
+            })
+            .catch(error => {
+                submitBtn.innerHTML = originalHtml;
+                submitBtn.disabled = false;
+                showToast('Error creating tunnel', 'error');
             });
         });
         
         function downloadBat(tunnelId) {
             window.location.href = `/download/${tunnelId}`;
+            showToast('Downloading client file...', 'success');
         }
         
         function deleteTunnel(tunnelId) {
@@ -398,7 +1094,7 @@
                 })
                 .then(response => response.json())
                 .then(data => {
-                    showAlert('✅ Tunnel deleted successfully', 'success');
+                    showToast('Tunnel deleted successfully', 'success');
                     loadTunnels();
                 });
             }

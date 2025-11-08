@@ -2,3 +2,4 @@
 .pythonlibs/
 __pycache__/
 *.pyc
+venv

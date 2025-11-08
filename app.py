@@ -8,7 +8,9 @@ import os
 import random
 import io
 import threading
-
+from proxy_server import close_connection
+import socket
+    
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'tunnel-management-secret-key-change-in-production'
 CORS(app)
@@ -130,7 +132,19 @@ def download_bat(tunnel_id):
         if not tunnel:
             return jsonify({'error': 'Tunnel not found'}), 404
         
-        domain = os.getenv('REPLIT_DEV_DOMAIN', 'localhost:5000')
+        env_domain = os.getenv('REPLIT_DEV_DOMAIN')
+        if env_domain:
+            domain = env_domain
+        else:
+            try:
+                s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+                s.connect(('8.8.8.8', 80))
+                local_ip = s.getsockname()[0]
+                s.close()
+            except Exception:
+                local_ip = '127.0.0.1'
+                
+            domain = f"{local_ip}:5000"
         server_url = f"https://{domain}" if 'replit' in domain.lower() else f"http://{domain}"
         
         verification_msg = ""
@@ -319,7 +333,7 @@ def handle_udp_response(data):
 
 @socketio.on('close_connection')
 def handle_close_connection_from_client(data):
-    from proxy_server import close_connection
+
     conn_id = data.get('conn_id')
     
     if conn_id:
@@ -327,6 +341,12 @@ def handle_close_connection_from_client(data):
         print(f'[*] Client closed connection {conn_id}')
 
 if __name__ == '__main__':
+    # ensure folders exist when running in container
     os.makedirs('templates', exist_ok=True)
     os.makedirs('static', exist_ok=True)
-    socketio.run(app, host='0.0.0.0', port=5000, debug=True)
+
+    # Use PORT from environment (Render provides $PORT). Default to 5000 for local dev.
+    port = int(os.environ.get('PORT', 5000))
+    debug = os.environ.get('FLASK_DEBUG', 'False').lower() in ('1', 'true', 'yes')
+
+    socketio.run(app, host='0.0.0.0', port=port, debug=debug)
