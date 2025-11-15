@@ -8,6 +8,7 @@ import os
 import random
 import io
 import threading
+import requests
 from proxy_server import close_connection
 import socket
     
@@ -19,6 +20,37 @@ socketio = SocketIO(app, cors_allowed_origins="*", ping_timeout=120, ping_interv
 
 connected_tunnels = {}
 traffic_proxy = None
+# Prevent multiple pings from being scheduled or sent
+ping_scheduled = False
+
+@app.route('/ping')
+def ping():
+    """Schedule a single GET to the external keep-alive URL after 30 seconds.
+
+    Mirrors the behaviour of the provided Express endpoint: if a ping has
+    already been scheduled or sent, return an informative message. Otherwise
+    schedule a background timer to perform the request after 30 seconds.
+    """
+    global ping_scheduled
+    target_url = 'https://chat-application-4byf.onrender.com/ping'
+
+    if ping_scheduled:
+        return 'Ping already scheduled or sent.'
+
+    ping_scheduled = True
+
+    def do_ping():
+        try:
+            resp = requests.get(target_url, timeout=10)
+            app.logger.info(f'Pinged {target_url} - status {resp.status_code}')
+        except Exception as e:
+            app.logger.error(f'Error pinging target: {e}')
+
+    timer = threading.Timer(30.0, do_ping)
+    timer.daemon = True
+    timer.start()
+
+    return 'Ping scheduled to run in 30 seconds.'
 
 @app.route('/')
 def index():
