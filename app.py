@@ -43,6 +43,7 @@ def ping():
         try:
             resp = requests.get(target_url, timeout=10)
             app.logger.info(f'Pinged {target_url} - status {resp.status_code}')
+            ping_scheduled = False
         except Exception as e:
             app.logger.error(f'Error pinging target: {e}')
 
