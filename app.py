@@ -61,7 +61,7 @@ def index():
 def get_tunnels():
     session = get_session()
     try:
-        domain = os.getenv('REPLIT_DEV_DOMAIN', 'localhost')
+        domain = os.getenv('BASE_DOMAIN', 'localhost')
         public_ip = domain.split('.')[0] if 'replit' in domain else 'localhost'
         
         tunnels = session.query(Tunnel).all()
@@ -166,7 +166,7 @@ def download_bat(tunnel_id):
         if not tunnel:
             return jsonify({'error': 'Tunnel not found'}), 404
         
-        env_domain = os.getenv('REPLIT_DEV_DOMAIN')
+        env_domain = os.getenv('BASE_DOMAIN')
         if env_domain:
             domain = env_domain
         else:
@@ -179,7 +179,7 @@ def download_bat(tunnel_id):
                 local_ip = '127.0.0.1'
                 
             domain = f"{local_ip}:5000"
-        server_url = f"https://{domain}" if 'replit' in domain.lower() else f"https://{domain}"
+        server_url = f"https://{domain}"
         
         verification_msg = ""
         if not tunnel.verified:
